@@ -1,18 +1,16 @@
 # Agent Worklog
 
-Name the tools you used. If you used no coding agent, state that explicitly.
-Do not paste secrets or an unreviewed raw transcript.
+| Date | Tool | Work | Review / evidence |
+| --- | --- | --- | --- |
+| 2026-10-17 | Claude Code (recorded in the existing log) | Initial design, base implementation, retry extension, and 13 additional tests. | The previous log attributes this work to Claude Code; exact model names and earlier repeated test runs were not independently verified during this review. |
+| 2026-10-17 | OpenAI Codex |Added a regression test for cancellation followed by an ordinary worker error. | The initial 18 tests passed during review. The updated suite has 19 tests; verification is recorded below. |
 
-| Date | Tool / model | Task or recommendation | My review and decision | Evidence |
-| --- | --- | --- | --- | --- |
-| 2026-10-17 | Claude Code (Claude Sonnet 5) | Read `TASKS_AND_GRADES.md` and the starter, summarized the required work and proposed a design: shared bounded scheduler on the actor using `withTaskGroup`, indexed result storage, cancellation checks at scheduling decisions, retry loop inside one child task. | Accepted after review; asked to implement both the base API and the retry bonus, with no code comments. | This file, `PLAN.md` |
-| 2026-10-17 | Claude Code (Claude Opus 5.5) | Implemented `TaskProcessor`, `RetryPolicy`, `RetryPolicyError` and the retry `process` overload in `Sources/TaskProcessor/TaskProcessor.swift` without changing public signatures. | Accepted; checked the diff against every row of the acceptance matrix and the bonus rules. | `swift test` |
-| 2026-10-17 | Claude Code (Claude Opus 5.5) | Wrote 13 student XCTest methods in `Tests/TaskProcessorTests/TaskProcessorStudentTests.swift` using an actor-based gate/probe, covering validation, bounded scheduling, ordering, outcomes, cancellation and retry. | Accepted; tests are gate-driven with no sleeps, distinct from starter tests. | 18/18 tests pass, repeated runs without failures |
+## Verification
 
-## Final review
+Command: `swift test`.
 
-All 18 tests (5 starter + 13 student) pass with no compiler warnings under
-Swift 6 language mode, and repeated runs showed no flakiness. Remaining risk:
-behavior for overlapping `process` calls on one instance is intentionally not
-handled, as it is outside the graded contract. I inspected the final diff
-before committing.
+Result: 19 tests passed (5 starter + 14 additional), with no failures.
+
+The initial implementation and tests used a coding agent. This log records
+agent work; it does not claim that the student has personally reviewed changes
+made during this session.

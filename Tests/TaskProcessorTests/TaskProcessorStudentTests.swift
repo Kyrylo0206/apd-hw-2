@@ -403,6 +403,32 @@ final class TaskProcessorStudentTests: XCTestCase {
         )
     }
 
+    func testCallerCancellationStopsRetryAfterOrdinaryError() async throws {
+        let processor = try TaskProcessor(maximumConcurrency: 1)
+        let probe = WorkProbe()
+        let policy = try RetryPolicy(maximumAttempts: 3)
+        let jobs = [Job(id: "a", input: 1), Job(id: "b", input: 2)]
+
+        let processing = Task {
+            try await processor.process(jobs, retryPolicy: policy) { job, attempt in
+                let key = "\(job.id):\(attempt)"
+                await probe.begin(key)
+                await probe.hold(key)
+                await probe.end(key)
+                throw StudentWorkerError.transient
+            }
+        }
+
+        await probe.waitUntilStarted("a:1")
+        processing.cancel()
+        await probe.release("a:1")
+
+        let results = try await processing.value
+        let attempts = await probe.startedIDs
+        XCTAssertEqual(attempts, ["a:1"])
+        XCTAssertEqual(results, jobs.map { JobResult(id: $0.id, outcome: .cancelled) })
+    }
+
     func testRetryRejectsDuplicateIDsAndHandlesEmptyInput() async throws {
         let processor = try TaskProcessor(maximumConcurrency: 2)
         let probe = WorkProbe()

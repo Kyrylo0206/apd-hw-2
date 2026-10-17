@@ -131,6 +131,7 @@ public extension TaskProcessor {
         let outcomes = await runBounded(jobCount: jobs.count) { index in
             var attempt = 1
             while true {
+                guard !Task.isCancelled else { return .cancelled }
                 do {
                     return .succeeded(try await worker(jobs[index], attempt))
                 } catch is CancellationError {

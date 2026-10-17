@@ -1,5 +1,8 @@
 # Homework 2: Deterministic Concurrent Task Processor
 
+[Solution repository](https://github.com/Kyrylo0206/apd-hw-2) ·
+[Assignment template](https://github.com/Mat-CauThon/apd-hw-2)
+
 Implement a bounded concurrent task processor as an individual Swift Package
 assignment. The package uses only the Swift standard library and XCTest.
 
@@ -28,9 +31,8 @@ new rule or edge-case policy.
 
 7. Follow `SUBMISSION.md` exactly.
 
-The untouched starter compiles, then stops in the intentional
-`fatalError("Implement Homework 2")` implementation stubs. This is expected:
-the visible behavior tests cannot pass until you implement the assignment.
+The base processor and optional retry extension are implemented.
+Run `swift test` to check the implementation.
 
 ## Repository evidence
 
